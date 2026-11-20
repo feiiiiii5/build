@@ -1254,8 +1254,9 @@ def test_extract_sdist_rejects_symlink_chain_traversal(tmp_path: pathlib.Path) -
         tar.addfile(member, io.BytesIO(payload))
 
     extract_dir = tmp_path / 'extract'
-    with pytest.raises(tarfile.TarError), build.__main__._extract_sdist(str(archive), extract_dir=str(extract_dir)):
-        pass
+    cm = build.__main__._extract_sdist(str(archive), extract_dir=str(extract_dir))
+    with pytest.raises(tarfile.TarError):
+        cm.__enter__()
 
     assert target.read_bytes() == b'original\n'
 
